@@ -1,40 +1,26 @@
 package com.PriceComparatorBackend.PriceComparatorBackend;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.io.Reader;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import com.opencsv.CSVReader;
-
+import com.PriceComparatorBackend.PriceComparatorBackend.Utils.Utils;
 
 @SpringBootApplication
 public class PriceComparatorBackendApplication {
 
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(PriceComparatorBackendApplication.class, args);
-		Path path = Paths.get("src/main/java/com/PriceComparatorBackend/PriceComparatorBackend/input.csv");
-        List<String[]> lines = readAllLines(path);
-        for(String[] line : lines)
-        {
-            for(String ceva : line)
-            {
-                System.out.print( ceva );
+        Utils.createDataset();
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/com/PriceComparatorBackend/PriceComparatorBackend/dataset.csv"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
             }
-
-            System.out.println();
+        }
+        catch(Exception e)
+        {   
+            System.out.println(e.getMessage());
         }
     }
-
-    public static List<String[]> readAllLines(Path filePath) throws Exception {
-    try (Reader reader = Files.newBufferedReader(filePath)) {
-        try (CSVReader csvReader = new CSVReader(reader)) {
-            return csvReader.readAll();
-        }
-    }
-}
 }
