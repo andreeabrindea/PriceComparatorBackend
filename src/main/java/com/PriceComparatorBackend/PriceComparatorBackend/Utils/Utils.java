@@ -8,9 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Utils {
-    public static void createDataset() throws Exception {
-        FileWriter fileWriter = new FileWriter("src/main/java/com/PriceComparatorBackend/PriceComparatorBackend/dataset.csv");
-		final File folder = new File("src/main/java/com/PriceComparatorBackend/PriceComparatorBackend/data");
+    public static void createDataset(String fileName, String folderName) throws Exception {
+        FileWriter fileWriter = new FileWriter("src/main/java/com/PriceComparatorBackend/PriceComparatorBackend/" + fileName + ".csv");
+		final File folder = new File("src/main/java/com/PriceComparatorBackend/PriceComparatorBackend/" + folderName);
         if (!folder.exists())
         {
             folder.mkdir();
