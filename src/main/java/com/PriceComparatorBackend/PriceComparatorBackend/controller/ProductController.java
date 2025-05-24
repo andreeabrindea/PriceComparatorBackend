@@ -26,7 +26,7 @@ public class ProductController {
     }
     
     @GetMapping("/products")
-    public ResponseEntity<Map<String, List<Product>>> getAllProducts(@RequestBody List<ProductRequest> products) {
+    public ResponseEntity<Map<String, List<Product>>> optimiseShoppingListForCostSaving(@RequestBody List<ProductRequest> products) {
         try {
             return ResponseEntity.ok(productService.getCheapestProducts(products));
         } catch (IOException e) {
