@@ -15,10 +15,11 @@ public class ProductRepository {
     public List<Product> getAllProducts(){
         try
         {
-            Utils.createDataset();
+            Utils.createDataset("dataset", "data");
         }
         catch (Exception exception)
         {
+            System.out.println(exception.getMessage());
             return null;
         }
         try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/com/PriceComparatorBackend/PriceComparatorBackend/dataset.csv"))) {
@@ -33,7 +34,7 @@ public class ProductRepository {
                 }
                 lineCount++;
             }
-            
+
             return products;
         }
         catch(Exception e)
@@ -41,5 +42,11 @@ public class ProductRepository {
             System.out.println(e.getMessage());
         }
         return null;
+    }
+
+    public Product findProductById(String id)
+    {
+        List<Product> products = getAllProducts();
+        return products.stream().filter(p -> p.getProductId().equalsIgnoreCase(id)).findAny().orElse(null);
     }
 }
