@@ -12,15 +12,15 @@ public class Product {
     private String productId;
 
     @NotBlank(message = "Name is required")
-    String productName;
-    String productCategory;
-    String brand;
-    Double packageQuantity;
-    String unit;
-    Double price;
-    String currency;
-    String storeName;
-    LocalDate date;
+    private String productName;
+    private String productCategory;
+    private String brand;
+    private Double packageQuantity;
+    private String unit;
+    private Double price;
+    private String currency;
+    private String storeName;
+    private LocalDate date;
 
     public Product(String productId, String productName, String productCategory, String brand, Double packageQuantity,
             String unit, Double price, String currency, String storeName, LocalDate date) {
