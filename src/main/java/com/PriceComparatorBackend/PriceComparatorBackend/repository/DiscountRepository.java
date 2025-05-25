@@ -1,6 +1,7 @@
 package com.PriceComparatorBackend.PriceComparatorBackend.repository;
 
 import com.PriceComparatorBackend.PriceComparatorBackend.model.Discount;
+import com.PriceComparatorBackend.PriceComparatorBackend.model.PriceHistoryPoint;
 import com.PriceComparatorBackend.PriceComparatorBackend.model.Product;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
@@ -8,12 +9,14 @@ import com.opencsv.CSVReaderBuilder;
 import com.PriceComparatorBackend.PriceComparatorBackend.Utils.Utils;
 
 import java.io.FileReader;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
@@ -27,7 +30,6 @@ public class DiscountRepository {
             Utils.createDataset("discountsDataset", "data/discounts");
 
         } catch (Exception exception) {
-            System.out.println("failed to create dataset");
             return null;
         }
 
@@ -55,8 +57,6 @@ public class DiscountRepository {
                             LocalDate.parse(line[headerMap.get("from_date")], formatter),
                             LocalDate.parse(line[headerMap.get("to_date")], formatter),
                             Integer.parseInt(line[headerMap.get("percentage_of_discount")])));
-                } else {
-                    System.out.println(String.format("Product not found for ID %s. Price remains unknown.", productId));
                 }
             }
         } catch (Exception e) {
@@ -64,5 +64,56 @@ public class DiscountRepository {
         }
 
         return discounts;
+    }
+
+    public List<PriceHistoryPoint> applyDiscountsAndGetPriceHistoryForProduct(Product product) {
+
+        List<Product> productRecords = productRepository.getAllProducts().stream()
+                .filter(p -> p.getProductId().equalsIgnoreCase(product.getProductId())).collect(Collectors.toList());
+
+        List<PriceHistoryPoint> priceHistoryPoints = new ArrayList<>();
+        if (getDiscountForCurrentProduct(product).size() == 0 && productRecords.size() == 0) {
+            PriceHistoryPoint priceHistoryPoint = new PriceHistoryPoint(product.getProductId(),
+                    product.getProductName(), product.getPrice(), product.getStoreName(), product.getDate());
+
+            priceHistoryPoints.add(priceHistoryPoint);
+
+            return priceHistoryPoints;
+        }
+
+        for (Discount discout : getDiscountForCurrentProduct(product)) {
+            if (product.getDate().isAfter(discout.getFromDate()) && product.getDate().isBefore(discout.getToDate())) {
+                Double priceWithDiscount = product.getPrice()
+                        - (discout.getPercentageOfDiscount() / 100.0 * product.getPrice());
+
+                DecimalFormat df = new DecimalFormat("#.00");
+                PriceHistoryPoint priceHistoryPoint = new PriceHistoryPoint(product.getProductId(),
+                        product.getProductName(),
+                        Double.valueOf(df.format(priceWithDiscount)),
+                        product.getStoreName(),
+                        product.getDate());
+
+                priceHistoryPoints.add(priceHistoryPoint);
+            }
+        }
+        for (Product productRecord : productRecords) {
+            PriceHistoryPoint priceHistoryPoint = new PriceHistoryPoint(productRecord.getProductId(),
+                    productRecord.getProductName(),
+                    product.getPrice(),
+                    product.getStoreName(),
+                    product.getDate());
+            priceHistoryPoints.add(priceHistoryPoint);
+        }
+
+        return priceHistoryPoints;
+
+    }
+
+    private List<Discount> getDiscountForCurrentProduct(Product product) {
+        List<Discount> discounts = getAllDiscounts();
+
+        return discounts.stream()
+                .filter(d -> d.getProduct().getProductId().equalsIgnoreCase(product.getProductId()))
+                .collect(Collectors.toList());
     }
 }
