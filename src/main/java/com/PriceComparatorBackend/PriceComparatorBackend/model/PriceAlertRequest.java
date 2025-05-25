@@ -5,7 +5,7 @@ public class PriceAlertRequest {
     private String userId;
     private Double targetPrice;
     private String productName;
-    private String productBrand;
+    private String brand;
 
     public PriceAlertRequest() {
     }
@@ -42,11 +42,11 @@ public class PriceAlertRequest {
         this.productName = productName;
     }
 
-    public String getProductBrand() {
-        return productBrand;
+    public String getBrand() {
+        return brand;
     }
 
-    public void setProductBrand(String productBrand) {
-        this.productBrand = productBrand;
+    public void setBrand(String productBrand) {
+        this.brand = productBrand;
     }
 }

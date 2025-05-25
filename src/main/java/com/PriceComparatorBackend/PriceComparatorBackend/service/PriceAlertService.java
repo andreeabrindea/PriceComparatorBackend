@@ -25,7 +25,7 @@ public class PriceAlertService {
 
     public PriceAlert createAlert(PriceAlertRequest request) {
         ProductFilter filters = new ProductFilter();
-        filters.setBrand(request.getProductBrand());
+        filters.setBrand(request.getBrand());
         filters.setProductCategory(request.getProductName());
         Product product = productRepository.filterProducts(productRepository.getAllProducts(), new ProductFilter()).get(0);
         if (product == null) {
@@ -37,7 +37,7 @@ public class PriceAlertService {
             request.getUserId(),
             request.getTargetPrice(),
             product.getProductName(),
-            request.getProductBrand(),
+            request.getBrand(),
             LocalDate.now()
         );
         

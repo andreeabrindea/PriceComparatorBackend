@@ -16,7 +16,7 @@ public class PriceAlertScheduler {
     public PriceAlertScheduler(PriceAlertRepository priceAlertRepository) {
         this.priceAlertRepository = priceAlertRepository;
     }
-    @Scheduled(fixedRate = 3600000)
+    @Scheduled(fixedRate = 360)
     public void scheduleAlert() {
         try {
             List<PriceAlert> alerts = priceAlertRepository.getAllAlerts();

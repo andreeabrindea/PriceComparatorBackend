@@ -52,6 +52,7 @@ public class PriceAlertRepository {
                 alert.setUserId(line[headerMap.get("user_id")]);
                 alert.setTargetPrice(Double.parseDouble(line[headerMap.get("target_price")]));
                 alert.setProductName(line[headerMap.get("product_name")]);
+                alert.setProductName(line[headerMap.get("product_brand")]);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 alert.setDateCreated(LocalDate.parse(line[headerMap.get("created_at")], formatter));
                 alerts.add(alert);
@@ -84,8 +85,8 @@ public class PriceAlertRepository {
             try (CSVWriter writer = new CSVWriter(new FileWriter(ALERTS_FILE), ';',
                     CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END)) {
 
-                String[] headers = { "alert_id", "product_id", "user_id", "target_price", "product_name", "brand",
-                        "created_at" };
+                String[] headers = { "alert_id", "user_id", "target_price", "product_name","brand","created_at"
+ };
                 writer.writeNext(headers);
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -96,6 +97,7 @@ public class PriceAlertRepository {
                             alert.getUserId(),
                             alert.getTargetPrice().toString(),
                             alert.getProductName() != null ? alert.getProductName() : "",
+                            alert.getProductBrand() != null ? alert.getProductBrand() : "",
                             alert.getDateCreated().format(formatter)
                     };
                     writer.writeNext(data);
