@@ -8,7 +8,7 @@ import com.PriceComparatorBackend.PriceComparatorBackend.model.PriceHistoryRespo
 import com.PriceComparatorBackend.PriceComparatorBackend.model.PriceStatistics;
 import com.PriceComparatorBackend.PriceComparatorBackend.model.ProductFilter;
 import com.PriceComparatorBackend.PriceComparatorBackend.model.Product;
-import com.PriceComparatorBackend.PriceComparatorBackend.repository.DiscountRepository;
+import com.PriceComparatorBackend.PriceComparatorBackend.repository.PriceHistoryRepository;
 import com.PriceComparatorBackend.PriceComparatorBackend.repository.ProductRepository;
 
 import java.util.*;
@@ -16,14 +16,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class PriceHistoryService {
-
+        private final PriceHistoryRepository priceHistoryRepository;
         private final ProductRepository productRepository;
-        private final DiscountRepository discountRepository;
-
+        
         @Autowired
-        public PriceHistoryService(ProductRepository productRepository, DiscountRepository discountRepository) {
+        public PriceHistoryService(PriceHistoryRepository priceHistoryRepository, ProductRepository productRepository) {
+                this.priceHistoryRepository = priceHistoryRepository;
                 this.productRepository = productRepository;
-                this.discountRepository = discountRepository;
         }
 
         public List<PriceHistoryResponse> getPriceHistory(ProductFilter filter) {
@@ -32,7 +31,7 @@ public class PriceHistoryService {
                         return null;
                 }
 
-                List<Product> filteredProducts = filterProducts(products, filter);
+                List<Product> filteredProducts = productRepository.filterProducts(products, filter);
                 if (filteredProducts.isEmpty()) {
                         return null;
                 }
@@ -40,7 +39,7 @@ public class PriceHistoryService {
                 List<PriceHistoryResponse> response = new ArrayList<>();
                 for (Product product : filteredProducts) {
                         List<PriceHistoryPoint> pricePoints = new ArrayList<>();
-                        for (PriceHistoryPoint pricePoint : discountRepository
+                        for (PriceHistoryPoint pricePoint : priceHistoryRepository
                                         .applyDiscountsAndGetPriceHistoryForProduct(product)) {
                                 pricePoints.add(pricePoint);
                         }
@@ -52,64 +51,6 @@ public class PriceHistoryService {
                 }
 
                 return response;
-        }
-
-        public List<Product> filterProducts(List<Product> products, ProductFilter filters) {
-                return products.stream().filter(
-                                p -> {
-                                        if (filters.getStoreName() != null) {
-                                                if (filters.getProductCategory() == null
-                                                                && filters.getBrand() == null) {
-                                                        return p.getStoreName().toLowerCase()
-                                                                        .contains(filters.getStoreName().toLowerCase());
-                                                }
-
-                                                if (filters.getProductCategory() == null) {
-                                                        return p.getStoreName().toLowerCase().contains(
-                                                                        filters.getStoreName().toLowerCase()) &&
-                                                                        p.getBrand().toLowerCase().contains(filters
-                                                                                        .getBrand().toLowerCase());
-                                                }
-
-                                                if (filters.getBrand() == null) {
-                                                        return p.getStoreName().toLowerCase()
-                                                                        .contains(filters.getStoreName().toLowerCase())
-                                                                        &&
-                                                                        p.getProductCategory().toLowerCase().contains(
-                                                                                        filters.getProductCategory()
-                                                                                                        .toLowerCase());
-                                                }
-                                                return p.getStoreName().toLowerCase()
-                                                                .contains(filters.getStoreName().toLowerCase()) &&
-                                                                p.getProductCategory().toLowerCase()
-                                                                                .contains(filters.getProductCategory()
-                                                                                                .toLowerCase())
-                                                                &&
-                                                                p.getBrand().toLowerCase().contains(
-                                                                                filters.getBrand().toLowerCase());
-                                        }
-
-                                        if (filters.getProductCategory() != null) {
-                                                if (filters.getBrand() == null) {
-                                                        return p.getProductCategory().toLowerCase()
-                                                                        .contains(filters.getProductCategory().toLowerCase());
-                                                }
-
-                                                return p.getProductCategory().toLowerCase()
-                                                                .contains(filters.getProductCategory()) &&
-                                                                p.getBrand().toLowerCase().contains(
-                                                                                filters.getBrand().toLowerCase());
-                                        }
-
-                                        if (filters.getBrand() != null) {
-                                                return p.getBrand().toLowerCase()
-                                                                .contains(filters.getBrand().toLowerCase());
-                                        }
-
-                                        return true;
-                                }
-
-                ).collect(Collectors.toList());
         }
 
         private PriceStatistics calculateStatistics(List<PriceHistoryPoint> points) {

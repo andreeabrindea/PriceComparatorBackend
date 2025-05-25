@@ -8,14 +8,12 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.PriceComparatorBackend.PriceComparatorBackend.repository.DiscountRepository;
 import com.PriceComparatorBackend.PriceComparatorBackend.repository.ProductRepository;
-import com.PriceComparatorBackend.PriceComparatorBackend.service.PriceHistoryService;
 import com.PriceComparatorBackend.PriceComparatorBackend.model.Product;
 import com.PriceComparatorBackend.PriceComparatorBackend.model.ProductFilter;
 
-public class PriceHistoryServiceTest {
-    private final PriceHistoryService priceHistoryService = new PriceHistoryService(new ProductRepository(), new DiscountRepository());
+public class ProductRepositoryTest {
+    private final ProductRepository productRepository = new ProductRepository();
 
     @Test
     public void test_filterProducts_byStore_shouldReturnExpected() {
@@ -30,7 +28,7 @@ public class PriceHistoryServiceTest {
         ProductFilter filter = new ProductFilter();
         filter.setStoreName("profi");
 
-        List<Product> actual = priceHistoryService.filterProducts(products, filter);
+        List<Product> actual = productRepository.filterProducts(products, filter);
         List<Product> expected = new ArrayList<>();
         expected.add(produsDinProfi);
         assertEquals(expected, actual);
@@ -52,7 +50,7 @@ public class PriceHistoryServiceTest {
         ProductFilter filter = new ProductFilter();
         filter.setProductCategory("lactate");
 
-        List<Product> actual = priceHistoryService.filterProducts(products, filter);
+        List<Product> actual = productRepository.filterProducts(products, filter);
         List<Product> expected = new ArrayList<>();
         expected.add(lapte);
         expected.add(iaurt);
@@ -75,7 +73,7 @@ public class PriceHistoryServiceTest {
         ProductFilter filter = new ProductFilter();
         filter.setBrand("Kaufland Classic");
 
-        List<Product> actual = priceHistoryService.filterProducts(products, filter);
+        List<Product> actual = productRepository.filterProducts(products, filter);
         List<Product> expected = new ArrayList<>();
         expected.add(apaMicelaraKauflandClassic);
         expected.add(solutiePodeleKauflandClassic);
@@ -98,7 +96,7 @@ public class PriceHistoryServiceTest {
         ProductFilter filter = new ProductFilter();
         filter.setProductCategory("lactate");
         filter.setStoreName("lidl");
-        List<Product> actual = priceHistoryService.filterProducts(products, filter);
+        List<Product> actual = productRepository.filterProducts(products, filter);
         List<Product> expected = new ArrayList<>();
         expected.add(lapteDinLidl);
         assertEquals(expected, actual);
@@ -123,7 +121,7 @@ public class PriceHistoryServiceTest {
         ProductFilter filter = new ProductFilter();
         filter.setStoreName("lidl");
         filter.setBrand("Zuzu");
-        List<Product> actual = priceHistoryService.filterProducts(products, filter);
+        List<Product> actual = productRepository.filterProducts(products, filter);
         List<Product> expected = new ArrayList<>();
         expected.add(lapteZuzuDinLidl);
         expected.add(iaurtZuzuDinLidl);
@@ -150,7 +148,7 @@ public class PriceHistoryServiceTest {
         ProductFilter filter = new ProductFilter();
         filter.setProductCategory("lactate");
         filter.setBrand("Zuzu");
-        List<Product> actual = priceHistoryService.filterProducts(products, filter);
+        List<Product> actual = productRepository.filterProducts(products, filter);
         List<Product> expected = new ArrayList<>();
         expected.add(lapteZuzuDinKaufland);
         expected.add(iaurtZuzuDinLidl);
@@ -177,7 +175,7 @@ public class PriceHistoryServiceTest {
         filter.setProductCategory("lactate");
         filter.setStoreName("lidl");
         filter.setBrand("Zuzu");
-        List<Product> actual = priceHistoryService.filterProducts(products, filter);
+        List<Product> actual = productRepository.filterProducts(products, filter);
         List<Product> expected = new ArrayList<>();
         expected.add(lapteDinLidlZuzu);
         expected.add(iaurtDinLidlZuzu);
@@ -201,7 +199,7 @@ public class PriceHistoryServiceTest {
         expected.add(iaurtDinProfi);
 
         ProductFilter filter = new ProductFilter();
-        List<Product> actual = priceHistoryService.filterProducts(expected, filter);
+        List<Product> actual = productRepository.filterProducts(expected, filter);
         assertEquals(expected, actual);
     }
 }

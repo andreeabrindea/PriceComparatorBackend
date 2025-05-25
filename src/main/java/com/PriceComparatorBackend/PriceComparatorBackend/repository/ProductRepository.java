@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.PriceComparatorBackend.PriceComparatorBackend.model.Product;
+import com.PriceComparatorBackend.PriceComparatorBackend.model.ProductFilter;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
@@ -64,5 +66,64 @@ public class ProductRepository {
     public Product findProductById(String id) {
         List<Product> products = getAllProducts();
         return products.stream().filter(p -> p.getProductId().equalsIgnoreCase(id)).findAny().orElse(null);
+    }
+
+    public List<Product> filterProducts(List<Product> products, ProductFilter filters) {
+        return products.stream().filter(
+                p -> {
+                    if (filters.getStoreName() != null) {
+                        if (filters.getProductCategory() == null
+                                && filters.getBrand() == null) {
+                            return p.getStoreName().toLowerCase()
+                                    .contains(filters.getStoreName().toLowerCase());
+                        }
+
+                        if (filters.getProductCategory() == null) {
+                            return p.getStoreName().toLowerCase().contains(
+                                    filters.getStoreName().toLowerCase()) &&
+                                    p.getBrand().toLowerCase().contains(filters
+                                            .getBrand().toLowerCase());
+                        }
+
+                        if (filters.getBrand() == null) {
+                            return p.getStoreName().toLowerCase()
+                                    .contains(filters.getStoreName().toLowerCase())
+                                    &&
+                                    p.getProductCategory().toLowerCase().contains(
+                                            filters.getProductCategory()
+                                                    .toLowerCase());
+                        }
+                        return p.getStoreName().toLowerCase()
+                                .contains(filters.getStoreName().toLowerCase()) &&
+                                p.getProductCategory().toLowerCase()
+                                        .contains(filters.getProductCategory()
+                                                .toLowerCase())
+                                &&
+                                p.getBrand().toLowerCase().contains(
+                                        filters.getBrand().toLowerCase());
+                    }
+
+                    if (filters.getProductCategory() != null) {
+                        if (filters.getBrand() == null) {
+                            return p.getProductCategory().toLowerCase()
+                                    .contains(filters.getProductCategory()
+                                            .toLowerCase());
+                        }
+
+                        return p.getProductCategory().toLowerCase()
+                                .contains(filters.getProductCategory()) &&
+                                p.getBrand().toLowerCase().contains(
+                                        filters.getBrand().toLowerCase());
+                    }
+
+                    if (filters.getBrand() != null) {
+                        return p.getBrand().toLowerCase()
+                                .contains(filters.getBrand().toLowerCase());
+                    }
+
+                    return true;
+                }
+
+        ).collect(Collectors.toList());
     }
 }

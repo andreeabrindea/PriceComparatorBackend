@@ -1,7 +1,6 @@
 package com.PriceComparatorBackend.PriceComparatorBackend.repository;
 
 import com.PriceComparatorBackend.PriceComparatorBackend.model.Discount;
-import com.PriceComparatorBackend.PriceComparatorBackend.model.PriceHistoryPoint;
 import com.PriceComparatorBackend.PriceComparatorBackend.model.Product;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
@@ -9,7 +8,6 @@ import com.opencsv.CSVReaderBuilder;
 import com.PriceComparatorBackend.PriceComparatorBackend.Utils.Utils;
 
 import java.io.FileReader;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -66,50 +64,7 @@ public class DiscountRepository {
         return discounts;
     }
 
-    public List<PriceHistoryPoint> applyDiscountsAndGetPriceHistoryForProduct(Product product) {
-
-        List<Product> productRecords = productRepository.getAllProducts().stream()
-                .filter(p -> p.getProductId().equalsIgnoreCase(product.getProductId())).collect(Collectors.toList());
-
-        List<PriceHistoryPoint> priceHistoryPoints = new ArrayList<>();
-        if (getDiscountForCurrentProduct(product).size() == 0 && productRecords.size() == 0) {
-            PriceHistoryPoint priceHistoryPoint = new PriceHistoryPoint(product.getProductId(),
-                    product.getProductName(), product.getPrice(), product.getStoreName(), product.getDate());
-
-            priceHistoryPoints.add(priceHistoryPoint);
-
-            return priceHistoryPoints;
-        }
-
-        for (Discount discout : getDiscountForCurrentProduct(product)) {
-            if (product.getDate().isAfter(discout.getFromDate()) && product.getDate().isBefore(discout.getToDate())) {
-                Double priceWithDiscount = product.getPrice()
-                        - (discout.getPercentageOfDiscount() / 100.0 * product.getPrice());
-
-                DecimalFormat df = new DecimalFormat("#.00");
-                PriceHistoryPoint priceHistoryPoint = new PriceHistoryPoint(product.getProductId(),
-                        product.getProductName(),
-                        Double.valueOf(df.format(priceWithDiscount)),
-                        product.getStoreName(),
-                        product.getDate());
-
-                priceHistoryPoints.add(priceHistoryPoint);
-            }
-        }
-        for (Product productRecord : productRecords) {
-            PriceHistoryPoint priceHistoryPoint = new PriceHistoryPoint(productRecord.getProductId(),
-                    productRecord.getProductName(),
-                    product.getPrice(),
-                    product.getStoreName(),
-                    product.getDate());
-            priceHistoryPoints.add(priceHistoryPoint);
-        }
-
-        return priceHistoryPoints;
-
-    }
-
-    private List<Discount> getDiscountForCurrentProduct(Product product) {
+    List<Discount> getDiscountForCurrentProduct(Product product) {
         List<Discount> discounts = getAllDiscounts();
 
         return discounts.stream()
