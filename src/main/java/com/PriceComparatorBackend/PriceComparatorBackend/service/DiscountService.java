@@ -26,7 +26,13 @@ public class DiscountService {
         List<Discount> discounts = discountRepository.getAllDiscounts();
         discounts.sort((a, b) -> Double.compare(b.getPercentageOfDiscount(), a.getPercentageOfDiscount()));
         return discounts.stream().limit(5).collect(Collectors.toList());
+    }
 
+    public List<Discount> getLatestDiscounts() {
+        List<Discount> discounts = discountRepository.getAllDiscounts();
+        return discounts.stream().filter(
+                d -> ChronoUnit.HOURS.between(d.getProduct().getDate().atStartOfDay(), LocalDateTime.now()) <= 24)
+                .collect(Collectors.toList());
     }
 
 }

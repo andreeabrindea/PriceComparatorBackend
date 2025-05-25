@@ -24,4 +24,10 @@ public class DiscountsController {
             return ResponseEntity.ok(discountService.getBiggestDiscounts());
     }
 
+    
+    @GetMapping("/latest-discounts")
+    public ResponseEntity<List<Discount>> getLatestDiscounts() {
+            return ResponseEntity.ok(discountService.getLatestDiscounts());
+    }
+
 }
