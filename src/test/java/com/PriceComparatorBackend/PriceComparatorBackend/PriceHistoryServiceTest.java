@@ -8,13 +8,14 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.PriceComparatorBackend.PriceComparatorBackend.repository.DiscountRepository;
 import com.PriceComparatorBackend.PriceComparatorBackend.repository.ProductRepository;
 import com.PriceComparatorBackend.PriceComparatorBackend.service.PriceHistoryService;
 import com.PriceComparatorBackend.PriceComparatorBackend.model.Product;
 import com.PriceComparatorBackend.PriceComparatorBackend.model.ProductFilter;
 
 public class PriceHistoryServiceTest {
-    private final PriceHistoryService priceHistoryService = new PriceHistoryService(new ProductRepository());
+    private final PriceHistoryService priceHistoryService = new PriceHistoryService(new ProductRepository(), new DiscountRepository());
 
     @Test
     public void test_filterProducts_byStore_shouldReturnExpected() {
