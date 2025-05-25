@@ -1,6 +1,5 @@
 package com.PriceComparatorBackend.PriceComparatorBackend.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,7 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public Map<String, List<Product>> getCheapestProducts(List<ProductRequest> basketProducts) throws IOException {
+    public Map<String, List<Product>> getCheapestProducts(List<ProductRequest> basketProducts) {
         List<Product> products = findProductsWithGivenNames(basketProducts, productRepository.getAllProducts());
         Map<String, List<Product>> productsGroupedByName = products.stream()
                 .collect(Collectors.groupingBy(p -> p.getProductName()));
@@ -36,6 +35,16 @@ public class ProductService {
         }
 
         return cheapestProducts.stream().collect(Collectors.groupingBy(Product::getStoreName));
+    }
+
+    public List<Product> substitute(String name) {
+        List<Product> products = productRepository.getAllProducts().stream()
+                .filter(p -> p.getProductName().toLowerCase().contains(name.toLowerCase()))
+                .collect(Collectors.toList());
+
+        products.sort(
+                (a, b) -> Double.compare(a.getPrice() / a.getPackageQuantity(), b.getPrice() / b.getPackageQuantity()));
+        return products;
     }
 
     private List<Product> findProductsWithGivenNames(List<ProductRequest> basketProducts,
