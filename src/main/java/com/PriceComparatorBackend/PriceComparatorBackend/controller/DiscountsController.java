@@ -19,8 +19,8 @@ public class DiscountsController {
         this.discountService = discountService;
     }
 
-    @GetMapping("/discounts")
-    public ResponseEntity<List<Discount>> optimiseShoppingListForCostSaving() {
+    @GetMapping("/best-discounts")
+    public ResponseEntity<List<Discount>> getBiggestDiscounts() {
             return ResponseEntity.ok(discountService.getBiggestDiscounts());
     }
 

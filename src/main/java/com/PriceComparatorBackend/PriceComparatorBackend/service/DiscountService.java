@@ -1,5 +1,7 @@
 package com.PriceComparatorBackend.PriceComparatorBackend.service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,8 +22,7 @@ public class DiscountService {
         this.discountRepository = discountRepository;
     }
 
-    public List<Discount> getBiggestDiscounts()
-    {
+    public List<Discount> getBiggestDiscounts() {
         List<Discount> discounts = discountRepository.getAllDiscounts();
         discounts.sort((a, b) -> Double.compare(b.getPercentageOfDiscount(), a.getPercentageOfDiscount()));
         return discounts.stream().limit(5).collect(Collectors.toList());
