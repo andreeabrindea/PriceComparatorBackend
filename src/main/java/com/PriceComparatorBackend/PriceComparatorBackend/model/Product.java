@@ -1,4 +1,7 @@
 package com.PriceComparatorBackend.PriceComparatorBackend.model;
+
+import java.time.LocalDate;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
@@ -17,10 +20,10 @@ public class Product {
     Double price;
     String currency;
     String storeName;
-    String date;
+    LocalDate date;
 
     public Product(String productId, String productName, String productCategory, String brand, Double packageQuantity,
-            String unit, Double price, String currency, String storeName, String date) {
+            String unit, Double price, String currency, String storeName, LocalDate date) {
         this.productId = productId;
         this.productName = productName;
         this.productCategory = productCategory;
@@ -105,11 +108,11 @@ public class Product {
         this.storeName = storeName;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
-    }    
+    }
 }
